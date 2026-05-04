@@ -13,6 +13,23 @@ api_key = st.sidebar.text_input("Enter X-API-KEY", type="password")
 # URL diubah ke server PythonAnywhere
 api_url = "http://ulosowo.pythonanywhere.com/analyze-contract"
 
+# --- Konfigurasi Telegram Bot ---
+TELEGRAM_BOT_TOKEN = "8661426539:AAF2hGPxTWEuBgFKiKp1BnUgCgkaceOH3fQ"
+CHAT_ID = "743378684"
+
+def send_telegram_alert(message):
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = {
+            "chat_id": CHAT_ID,
+            "text": message,
+            "parse_mode": "Markdown"
+        }
+        requests.post(url, json=payload, timeout=5)
+    except Exception:
+        pass
+# -------------------------------
+
 uploaded_file = st.file_uploader("Pilih file PDF kontrak/UU", type="pdf")
 
 # Fungsi untuk mewarnai baris berdasarkan risiko
@@ -66,14 +83,16 @@ if st.button("Mulai Analisis"):
                                 st.write(f"**Pasal/Klausul:** {item.get('clause')}")
                                 st.write(f"**Masalah:** {item.get('issue')}")
                                 st.info(f"**Saran:** {item.get('suggestion')}")
-                
+                                
                 elif response.status_code == 403:
                     st.error("Gagal: API Key salah atau tidak memiliki akses.")
                 else:
                     st.error(f"Error {response.status_code}: {response.text}")
+                    send_telegram_alert(f"🚨 *Peringatan Backend LexiGuard AI*\n\nBackend memberikan respons error.\nStatus Code: {response.status_code}\nDetail: {response.text}")
                     
             except Exception as e:
                 st.error(f"Gagal terhubung ke server: {e}")
+                send_telegram_alert(f"🚨 *Peringatan Backend LexiGuard AI*\n\nStatus: Tidak dapat terhubung ke server.\nDetail Error: {e}")
 
 st.divider()
 st.caption("© 2026 LexiGuard AI Microservice SaaS - Powered by Gemini 1.5 Flash")
