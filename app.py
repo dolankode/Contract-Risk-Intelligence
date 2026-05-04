@@ -10,7 +10,8 @@ st.markdown("Unggah dokumen hukum (PDF) untuk analisis risiko instan berbasis AI
 # Sidebar untuk Konfigurasi
 st.sidebar.header("Settings")
 api_key = st.sidebar.text_input("Enter X-API-KEY", type="password")
-api_url = "http://localhost:8000/analyze-contract"
+# URL diubah ke server PythonAnywhere
+api_url = "http://ulosowo.pythonanywhere.com/analyze-contract"
 
 uploaded_file = st.file_uploader("Pilih file PDF kontrak/UU", type="pdf")
 
